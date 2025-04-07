@@ -3,6 +3,7 @@ package com.project.service;
 import java.util.List;
 
 import com.project.dto.MarketDTO;
+import com.project.dto.StoreDTO;
 
 public interface MarketService {
 

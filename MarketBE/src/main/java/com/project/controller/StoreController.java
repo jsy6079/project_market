@@ -8,27 +8,25 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.project.dto.MarketDTO;
 import com.project.dto.StoreDTO;
-import com.project.service.MarketService;
+import com.project.service.StoreService;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/market")
-public class MarketController {
+@RequestMapping("/api/store")
+public class StoreController {
 	
-	private final MarketService marketService;
+	private final StoreService storeService;
 	
-	// 마켓 정보 불러오기
-	@GetMapping("/")
-	public ResponseEntity<List<MarketDTO>> getMarket(){
+	// 점포 정보 불러오기
+	@GetMapping("/{marketId}")
+	public ResponseEntity<List<StoreDTO>> getStore(@PathVariable(name = "marketId") Long marketId){
 		
-		List<MarketDTO> response = marketService.getMarket();
+		List<StoreDTO> response = storeService.getStore(marketId);
 		
 		return ResponseEntity.ok(response);
-		
 	}
-	
+
 }

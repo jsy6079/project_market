@@ -1,13 +1,15 @@
 package com.project.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.project.dto.MarketDTO;
+import com.project.dto.StoreDTO;
+import com.project.entity.Market;
 import com.project.repository.MarketRepository;
+import com.project.repository.StoreRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +27,5 @@ public class MarketServiceImpe implements MarketService {
 					.map(MarketDTO::fromEntity)
 					.collect(Collectors.toList());
 	}
-
 
 }

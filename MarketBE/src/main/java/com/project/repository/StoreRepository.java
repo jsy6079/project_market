@@ -1,10 +1,14 @@
 package com.project.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import com.project.entity.Market;
 import com.project.entity.Store;
 
 public interface StoreRepository extends JpaRepository<Store, Long> {
+
+	List<Store> findByMarket(Market market);
+
 
 }
