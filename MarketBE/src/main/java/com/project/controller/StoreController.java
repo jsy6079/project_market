@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.dto.StoreDTO;
+import com.project.dto.StorePriceDTO;
 import com.project.service.StoreService;
 
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,15 @@ public class StoreController {
 	public ResponseEntity<List<StoreDTO>> getStore(@PathVariable(name = "marketId") Long marketId){
 		
 		List<StoreDTO> response = storeService.getStore(marketId);
+		
+		return ResponseEntity.ok(response);
+	}
+	
+	// 점포 가격 불러오기
+	@GetMapping("/detail/{storeId}")
+	public ResponseEntity<List<StorePriceDTO>> getStorePrice(@PathVariable(name = "storeId") Long storeId){
+		
+		List<StorePriceDTO> response = storeService.getStorePrice(storeId);
 		
 		return ResponseEntity.ok(response);
 	}

@@ -1,26 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import MarketSidebar from "../components/MarketSidebar";
 
 const ModernMarketMap = ({ markets }) => {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersRef = useRef([]);
-  const [selectedMarket, setSelectedMarket] = useState(null); // 시장 선택
-  const [searchTerm, setSearchTerm] = useState(""); // 시장 검색
-  const [userLocation, setUserLocation] = useState(null); // 내 위치
-  const [storeList, setStoreList] = useState([]); // 점포
+  const [selectedMarket, setSelectedMarket] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [userLocation, setUserLocation] = useState(null);
+  const [storeList, setStoreList] = useState([]);
 
-  // 점포 리스트
+  // 점포 리스트 가져오기
   useEffect(() => {
     if (selectedMarket) {
       axios
         .get(`http://localhost:8080/api/store/${selectedMarket.marketId}`)
-        .then((res) => {
-          setStoreList(res.data);
-        })
-        .catch((err) => {
-          console.error("점포 불러오기 실패", err);
-        });
+        .then((res) => setStoreList(res.data))
+        .catch((err) => console.error("점포 불러오기 실패", err));
     }
   }, [selectedMarket]);
 
@@ -68,9 +65,9 @@ const ModernMarketMap = ({ markets }) => {
       mapInstanceRef.current = map;
       markersRef.current = [];
 
-      // 내 위치 마커 렌더링
+      // 내 위치 마커
       if (userLocation) {
-        const userMarker = new window.naver.maps.Marker({
+        new window.naver.maps.Marker({
           position: new window.naver.maps.LatLng(
             userLocation.lat,
             userLocation.lon
@@ -94,7 +91,7 @@ const ModernMarketMap = ({ markets }) => {
         });
       }
 
-      // 시장 마커 렌더링
+      // 시장 마커
       markets.forEach((market) => {
         const position = new window.naver.maps.LatLng(
           market.marketLat,
@@ -129,7 +126,6 @@ const ModernMarketMap = ({ markets }) => {
           },
         });
 
-        // 말풍선 창
         const infowindow = new window.naver.maps.InfoWindow({
           content: `
             <div style="
@@ -158,7 +154,7 @@ const ModernMarketMap = ({ markets }) => {
           setSelectedMarket(market);
         });
 
-        markersRef.current.push({ market, marker });
+        markersRef.current.push({ market, marker, infowindow });
       });
     };
 
@@ -167,8 +163,9 @@ const ModernMarketMap = ({ markets }) => {
     return () => {
       if (script.parentNode) script.parentNode.removeChild(script);
     };
-  }, [markets, userLocation]); // userLocation 들어오면 다시 렌더링
+  }, [markets, userLocation]);
 
+  // 반응형 대응
   useEffect(() => {
     const handleResize = () => {
       if (mapInstanceRef.current?.relayout) {
@@ -179,7 +176,7 @@ const ModernMarketMap = ({ markets }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // 마커 중심으로 맵 이동
+  // 마커 클릭시 지도 이동
   const handleMarketClick = (market) => {
     setSelectedMarket(market);
     const target = markersRef.current.find(
@@ -189,13 +186,9 @@ const ModernMarketMap = ({ markets }) => {
       mapInstanceRef.current.panTo(
         new window.naver.maps.LatLng(market.marketLat, market.marketLon)
       );
+      target.infowindow.open(mapInstanceRef.current, target.marker);
     }
   };
-
-  // 검색 필터링
-  const filteredMarkets = markets.filter((m) =>
-    m.marketName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div
@@ -205,170 +198,16 @@ const ModernMarketMap = ({ markets }) => {
         fontFamily: "'Inter', sans-serif",
       }}
     >
-      {/* 사이드바 */}
-      <div
-        style={{
-          width: "340px",
-          backgroundColor: "#f5f7fa",
-          borderRight: "1px solid #ddd",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        {selectedMarket ? (
-          <div style={{ padding: "20px", flex: 1 }}>
-            <button
-              onClick={() => setSelectedMarket(null)}
-              style={{
-                marginBottom: "16px",
-                backgroundColor: "#e0e0e0",
-                border: "none",
-                padding: "6px 12px",
-                borderRadius: "6px",
-                cursor: "pointer",
-                fontSize: "13px",
-              }}
-            >
-              ← 목록으로
-            </button>
+      <MarketSidebar
+        selectedMarket={selectedMarket}
+        setSelectedMarket={setSelectedMarket}
+        markets={markets}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        storeList={storeList}
+        onMarketClick={handleMarketClick}
+      />
 
-            <h3
-              style={{
-                fontSize: "18px",
-                fontWeight: "600",
-                marginBottom: "10px",
-                color: "#1e90ff",
-              }}
-            >
-              {selectedMarket.marketName}
-            </h3>
-
-            <p>
-              🗺️ <strong>주소:</strong> {selectedMarket.marketAddress}
-            </p>
-            <p>
-              🏠 <strong>매장 수:</strong> {selectedMarket.marketStoreCount}
-            </p>
-            <p>
-              📞 <strong>전화번호:</strong>{" "}
-              {selectedMarket.marketPhoneNumber || "없음"}
-            </p>
-            <p>
-              🌐 <strong>홈페이지:</strong>{" "}
-              {selectedMarket.marketHomePage ? (
-                <a
-                  href={`https://${selectedMarket.marketHomePage}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{ color: "#1e90ff" }}
-                >
-                  {selectedMarket.marketHomePage}
-                </a>
-              ) : (
-                "없음"
-              )}
-            </p>
-            <p>
-              🚻 <strong>화장실:</strong>{" "}
-              {selectedMarket.marketToliet ? "있음" : "없음"}
-            </p>
-            <p>
-              🅿️ <strong>주차장:</strong>{" "}
-              {selectedMarket.marketParking ? "있음" : "없음"}
-            </p>
-            <p>
-              🧺 <strong>취급품목:</strong>{" "}
-              {selectedMarket.marketItemsList || "정보 없음"}
-            </p>
-            <h3
-              style={{
-                fontSize: "18px",
-                fontWeight: "600",
-                marginBottom: "10px",
-                color: "#1e90ff",
-              }}
-            >
-              {selectedMarket.marketName} 입점 점포
-            </h3>
-            {storeList.length > 0 ? (
-              storeList.map((store) => (
-                <div
-                  key={store.storeId}
-                  style={{
-                    backgroundColor: "#fff",
-                    padding: "10px 14px",
-                    borderRadius: "8px",
-                    boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
-                    marginBottom: "10px",
-                  }}
-                >
-                  <div style={{ fontWeight: "600", color: "#1e90ff" }}>
-                    {store.storeName}
-                  </div>
-                  <div style={{ fontSize: "13px", color: "#777" }}>
-                    {store.productCategoryName}
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p style={{ fontSize: "13px", color: "#999" }}>
-                등록된 점포가 없습니다.
-              </p>
-            )}
-          </div>
-        ) : (
-          <>
-            <div style={{ padding: "20px", borderBottom: "1px solid #ddd" }}>
-              <h2
-                style={{
-                  fontSize: "18px",
-                  fontWeight: "600",
-                  color: "#1e90ff",
-                }}
-              >
-                전통시장 리스트
-              </h2>
-              <input
-                type="text"
-                placeholder="시장명을 검색해주세요."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                style={{
-                  width: "90%",
-                  marginTop: "10px",
-                  padding: "8px 12px",
-                  borderRadius: "6px",
-                  border: "1px solid #ccc",
-                  fontSize: "14px",
-                }}
-              />
-            </div>
-
-            <div style={{ flex: 1, overflowY: "auto", padding: "10px 20px" }}>
-              {filteredMarkets.map((market) => (
-                <div
-                  key={market.marketId}
-                  onClick={() => handleMarketClick(market)}
-                  style={{
-                    background: "#fff",
-                    borderRadius: "8px",
-                    padding: "12px",
-                    marginBottom: "10px",
-                    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-                    cursor: "pointer",
-                  }}
-                >
-                  <div style={{ fontWeight: "bold" }}>{market.marketName}</div>
-                  <div style={{ color: "#666", fontSize: "13px" }}>
-                    {market.marketAddress}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
-      {/* 상단 영역 */}
       <div style={{ flex: 1, position: "relative" }}>
         <div
           style={{
@@ -382,8 +221,48 @@ const ModernMarketMap = ({ markets }) => {
             fontSize: "16px",
           }}
         >
-          서울시 전통시장 지도
+          <div
+            style={{
+              marginTop: "12px",
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "8px",
+              paddingBottom: "10px",
+            }}
+          >
+            {[
+              "🥬 배추",
+              "🌿 시금치",
+              "🧅 양파",
+              "🍉 수박",
+              "🍓 딸기",
+              "🐖 돼지고기",
+              "🐂 소고기",
+              "🐄 우유",
+              "🐟 고등어",
+              "🦈 갈치",
+              "🦪 굴",
+            ].map((item) => (
+              <button
+                key={item}
+                style={{
+                  backgroundColor: "#ffffff",
+                  border: "1px solid #c2d4ee",
+                  borderRadius: "20px",
+                  padding: "6px 14px",
+                  fontSize: "13px",
+                  color: "#1e293b",
+                  cursor: "pointer",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+                  transition: "all 0.2s ease",
+                }}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
         </div>
+
         <div
           ref={mapRef}
           style={{ width: "100%", height: "calc(100% - 50px)" }}
