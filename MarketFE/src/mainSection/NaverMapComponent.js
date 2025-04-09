@@ -208,6 +208,7 @@ const ModernMarketMap = ({ markets }) => {
         onMarketClick={handleMarketClick}
       />
 
+      {/* 상단바 박스 */}
       <div style={{ flex: 1, position: "relative" }}>
         <div
           style={{
@@ -220,48 +221,7 @@ const ModernMarketMap = ({ markets }) => {
             fontWeight: "600",
             fontSize: "16px",
           }}
-        >
-          <div
-            style={{
-              marginTop: "12px",
-              display: "flex",
-              flexWrap: "wrap",
-              gap: "8px",
-              paddingBottom: "10px",
-            }}
-          >
-            {[
-              "🥬 배추",
-              "🌿 시금치",
-              "🧅 양파",
-              "🍉 수박",
-              "🍓 딸기",
-              "🐖 돼지고기",
-              "🐂 소고기",
-              "🐄 우유",
-              "🐟 고등어",
-              "🦈 갈치",
-              "🦪 굴",
-            ].map((item) => (
-              <button
-                key={item}
-                style={{
-                  backgroundColor: "#ffffff",
-                  border: "1px solid #c2d4ee",
-                  borderRadius: "20px",
-                  padding: "6px 14px",
-                  fontSize: "13px",
-                  color: "#1e293b",
-                  cursor: "pointer",
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-                  transition: "all 0.2s ease",
-                }}
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-        </div>
+        ></div>
 
         <div
           ref={mapRef}

@@ -57,10 +57,10 @@ public class StoreData implements CommandLineRunner {
                     storeRepository.save(store);
                 }
 
-                System.out.println("✅ Store 데이터 삽입 완료!");
+                System.out.println("Store 데이터 삽입 완료!");
 
             } catch (Exception e) {
-                System.err.println("❌ Store 데이터 삽입 실패");
+                System.err.println("Store 데이터 삽입 실패");
                 e.printStackTrace();
             }
         }

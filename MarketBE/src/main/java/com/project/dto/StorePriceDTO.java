@@ -15,6 +15,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class StorePriceDTO {
 	
+	// 해당 점포 상품의 가격을 가져오는 DTO
+	
 	private Long productPriceId;
 	private Long productPriceCost;
 	private LocalDateTime proudctRegDate;

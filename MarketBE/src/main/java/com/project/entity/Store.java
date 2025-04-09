@@ -16,6 +16,8 @@ public class Store {
     private Long storeId;
 
     private String storeName;
+    
+    private String storeImg;
 
     @ManyToOne
     @JoinColumn(name = "marketId")

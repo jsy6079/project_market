@@ -13,6 +13,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class StoreDTO {
 	
+	// 점포 상세 정보를 가져오는 DTO
+	
     private Long storeId;
     private String storeName;
     private Long marketId;
