@@ -13,7 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class StorePriceCompareDTO {
 	
-	// 점포별 해당하는 상품의 가격을 가져오는 DTO
+	// 점포별 해당하는 상품의 가격을 가져오는(가격비교페이지) DTO + 상세페이지(주문) 에서도 이 DTO 활용
 	
 	private Long marketId;
 	private String marketName;
@@ -22,8 +22,9 @@ public class StorePriceCompareDTO {
 	private Long storeId;
 	private String storeName;
 	
-	private Long productId;
+	private Long productPriceId;
 	private String productName;
+	private String productDescription;
 	private Long productPriceCost;
 	
 	
@@ -36,6 +37,7 @@ public class StorePriceCompareDTO {
 				productPrice.getStore().getStoreName(),
 				productPrice.getProductPriceId(),
 				productPrice.getProduct().getProductName(),
+				productPrice.getProduct().getProductDescription(),
 				productPrice.getProductPriceCost()
 		);
 	}

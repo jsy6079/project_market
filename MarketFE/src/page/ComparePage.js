@@ -11,29 +11,33 @@ import {
 } from "react-bootstrap";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
+import NavBar from "./NavBar";
 import test from "../test.png";
 
 const productNames = {
-  1: "배추(1포기)",
-  2: "시금치(100g)",
-  3: "양파(1kg)",
-  4: "수박(1개)",
-  5: "딸기(100g)",
-  6: "돼지고기(100g)",
-  7: "소고기(100g)",
-  8: "우유(1L)",
-  9: "고등어(1마리)",
-  10: "갈치(1마리)",
-  11: "굴(1kg)",
+  1: "배추",
+  2: "시금치",
+  3: "양파",
+  4: "수박",
+  5: "딸기",
+  6: "돼지고기",
+  7: "소고기",
+  8: "우유",
+  9: "고등어",
+  10: "갈치",
+  11: "굴",
 };
 
 const ComparePage = () => {
   const { id } = useParams();
+
   const navigate = useNavigate();
 
   const [productCostList, setProductCostList] = useState([]);
   const productName = productNames[id]; // id 가 1이면 배추
   const [sortOption, setSortOption] = useState("none"); // 디폴트 등록순으로 나열
+  const productDescription =
+    productCostList.length > 0 ? productCostList[0].productDescription : ""; // 상품 상세 설명
 
   useEffect(() => {
     axios
@@ -48,59 +52,17 @@ const ComparePage = () => {
 
   return (
     <>
-      <Navbar expand="lg" className="bg-body-tertiary">
-        <Container>
-          <Navbar.Brand>상품별 가격 비교</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto">
-              <NavDropdown title="🥬농산물" id="basic-nav-dropdown">
-                <NavDropdown.Item onClick={() => navigate("/compare/1")}>
-                  배추
-                </NavDropdown.Item>
-                <NavDropdown.Item onClick={() => navigate("/compare/2")}>
-                  시금치
-                </NavDropdown.Item>
-                <NavDropdown.Item onClick={() => navigate("/compare/3")}>
-                  양파
-                </NavDropdown.Item>
-                <NavDropdown.Item onClick={() => navigate("/compare/4")}>
-                  수박
-                </NavDropdown.Item>
-                <NavDropdown.Item onClick={() => navigate("/compare/5")}>
-                  딸기
-                </NavDropdown.Item>
-              </NavDropdown>
-              <NavDropdown title="🐄축산물" id="basic-nav-dropdown">
-                <NavDropdown.Item onClick={() => navigate("/compare/6")}>
-                  돼지고기
-                </NavDropdown.Item>
-                <NavDropdown.Item onClick={() => navigate("/compare/7")}>
-                  소고기
-                </NavDropdown.Item>
-                <NavDropdown.Item onClick={() => navigate("/compare/8")}>
-                  우유
-                </NavDropdown.Item>
-              </NavDropdown>
-              <NavDropdown title="🐟수산물" id="basic-nav-dropdown">
-                <NavDropdown.Item onClick={() => navigate("/compare/9")}>
-                  고등어
-                </NavDropdown.Item>
-                <NavDropdown.Item onClick={() => navigate("/compare/10")}>
-                  갈치
-                </NavDropdown.Item>
-                <NavDropdown.Item onClick={() => navigate("/compare/11")}>
-                  굴
-                </NavDropdown.Item>
-              </NavDropdown>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
+      <NavBar />
       <div className="container py-3">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h4 className="fw-bold">
-            <span className="align-middle">{productName} 가격 비교</span>
+            <span className="align-middle">
+              {productName}{" "}
+              <span style={{ fontSize: "20px", color: "#666" }}>
+                {productDescription}{" "}
+              </span>{" "}
+              가격 비교
+            </span>
           </h4>
           <select
             className="form-select w-auto"
@@ -121,19 +83,50 @@ const ComparePage = () => {
                   variant="top"
                   src={test}
                   className="img-fluid"
-                  style={{ height: "180px", objectFit: "cover" }}
+                  style={{ height: "200px", objectFit: "cover" }}
                 />
-                <Card.Body>
-                  <Card.Title className="fw-bold">
-                    {store.marketName}{" "}
-                    <span className="text-muted">➤ {store.storeName}</span>
-                  </Card.Title>
-                  <Card.Text className="text-muted mb-1">
-                    {store.marketAdress}
-                  </Card.Text>
-                  <Badge bg="primary">
-                    {store.productPriceCost.toLocaleString()}원
-                  </Badge>
+                <Card.Body
+                  className="d-flex flex-column justify-content-between"
+                  style={{ height: "160px" }}
+                >
+                  <div>
+                    <Card.Title
+                      className="fw-bold mb-2"
+                      style={{ fontSize: "1rem" }}
+                    >
+                      {store.marketName}{" "}
+                      <span className="text-muted">➤ {store.storeName}</span>
+                    </Card.Title>
+
+                    <Card.Text
+                      className="text-muted mb-3 text-truncate"
+                      style={{
+                        maxHeight: "3em",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "normal",
+                      }}
+                    >
+                      {store.marketAdress}
+                    </Card.Text>
+                  </div>
+
+                  <div className="d-flex justify-content-end align-items-center gap-2">
+                    <h5 className="fw-bold text-dark mb-0">
+                      {store.productPriceCost.toLocaleString()}원
+                    </h5>
+                    <Badge
+                      bg="primary"
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        navigate("/order", {
+                          state: { productPriceId: store.productPriceId },
+                        })
+                      }
+                    >
+                      Order
+                    </Badge>
+                  </div>
                 </Card.Body>
               </Card>
             </div>

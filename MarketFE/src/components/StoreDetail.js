@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Container, Row, Col, Card, Button, Badge } from "react-bootstrap";
+import { useParams, useNavigate } from "react-router-dom";
 
 const StoreDetail = ({ store, onBack }) => {
+  const navigate = useNavigate();
   const [storeDetail, setStoreDetail] = useState([]);
 
   useEffect(() => {
@@ -31,11 +34,30 @@ const StoreDetail = ({ store, onBack }) => {
             <div style={{ fontWeight: "600" }}>
               {item.productName}{" "}
               <span style={{ fontSize: "13px", color: "#666" }}>
-                {item.productDescription}
+                {item.productDescription}{" "}
               </span>
             </div>
-            <div style={{ fontSize: "14px", color: "#333" }}>
-              {item.productPriceCost.toLocaleString()}원
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between", // 좌우 끝으로 배치
+                alignItems: "center",
+                fontSize: "14px",
+                color: "#333",
+              }}
+            >
+              <span>{item.productPriceCost.toLocaleString()}원</span>
+              <Badge
+                bg="primary"
+                style={{ cursor: "pointer" }}
+                onClick={() =>
+                  navigate("/order", {
+                    state: { productPriceId: item.productPriceId },
+                  })
+                }
+              >
+                Order
+              </Badge>
             </div>
           </div>
         ))

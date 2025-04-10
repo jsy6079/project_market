@@ -30,6 +30,13 @@ public class ProductPriceController {
 	}
 	
 	
+	// 해당 상품의 해당 점포 금액 (결과 1개)
+	@GetMapping("/cost/detail/{productPriceId}")
+	public ResponseEntity<List<StorePriceCompareDTO>> getDetailProductPrice(@PathVariable (name = "productPriceId") Long productPriceId){
+		List<StorePriceCompareDTO> response = productPriceService.getDetailProductPrice(productPriceId);
+		
+		return ResponseEntity.ok(response);
+	}
 	
 	
 

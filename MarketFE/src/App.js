@@ -4,6 +4,7 @@ import axios from "axios";
 
 import NaverMapComponent from "../src/mainSection/NaverMapComponent";
 import ComparePage from "../src/page/ComparePage";
+import StoreOrderPage from "./page/StoreOrderPage";
 
 function App() {
   const [marketList, setMarketList] = useState([]);
@@ -24,6 +25,7 @@ function App() {
       <Routes>
         <Route path="/" element={<NaverMapComponent markets={marketList} />} />
         <Route path="/compare/:id" element={<ComparePage />} />
+        <Route path="/order" element={<StoreOrderPage />} />
       </Routes>
     </Router>
   );

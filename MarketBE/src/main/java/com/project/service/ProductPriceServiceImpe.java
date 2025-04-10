@@ -39,4 +39,18 @@ public class ProductPriceServiceImpe implements ProductPriceService {
 	            .toList();
 	}
 
+	// 해당 상품의 해당 점포 금액 (결과 1개)
+	@Override
+	public List<StorePriceCompareDTO> getDetailProductPrice(Long productPriceId) {
+		
+		ProductPrice productPrice = productPriceRepository.findById(productPriceId).orElseThrow(() -> new IllegalArgumentException("해당 상품의 가격이 존재하지 않습니다."));
+		
+		
+		// 객체 하나만 받을때
+		return List.of(StorePriceCompareDTO.formEntiry(productPrice));
+	}
+		
+		
+	
+
 }
